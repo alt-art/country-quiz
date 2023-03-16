@@ -6,7 +6,7 @@ function Header() {
     <header className="flex items-center bg-principal bg-opacity-5 px-10 md:px-20">
       <div className="flex w-full flex-col items-center justify-center">
         <h1 className="text-3xl font-bold text-principal">Country Quiz</h1>
-        <p className="text-sm text-white">
+        <p className="text-sm dark:text-white">
           Test your knowledge about countries
         </p>
       </div>
