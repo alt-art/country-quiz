@@ -1,5 +1,5 @@
 import { EnterOutlined } from '@ant-design/icons';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { QuizContext } from '../context/QuizContext';
 import Button from './Button';
 import Card from './Card';
@@ -15,6 +15,19 @@ function Quiz() {
     setQuestionIndex,
     setMode,
   } = useContext(QuizContext);
+
+  useEffect(() => {
+    function keyDownHandler(e: KeyboardEvent) {
+      const key = Number(e.key);
+      if (key >= 1 && key <= questions[questionIndex].answers.length) {
+        setSelectedAnswer(key - 1);
+      }
+    }
+    window.addEventListener('keydown', keyDownHandler);
+    return () => {
+      window.removeEventListener('keydown', keyDownHandler);
+    };
+  }, [questions, questionIndex, setSelectedAnswer]);
 
   const question = questions[questionIndex];
 
