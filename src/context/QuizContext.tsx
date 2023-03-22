@@ -7,6 +7,10 @@ interface Question {
 }
 
 interface QuizContextProps {
+  questionIndex: number;
+  setQuestionIndex: (questionIndex: number) => void;
+  questionsCount: number;
+  setQuestionsCount: (questionsCount: number) => void;
   selectedAnswer: number;
   setSelectedAnswer: (selectedAnswer: number) => void;
   questions: Question[];
@@ -16,6 +20,10 @@ interface QuizContextProps {
 }
 
 export const QuizContext = createContext<QuizContextProps>({
+  questionIndex: 0,
+  setQuestionIndex: () => {},
+  questionsCount: 0,
+  setQuestionsCount: () => {},
   selectedAnswer: 0,
   setSelectedAnswer: () => {},
   questions: [],
@@ -25,6 +33,8 @@ export const QuizContext = createContext<QuizContextProps>({
 });
 
 function QuizProvider({ children }: { children: React.ReactNode }) {
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [questionsCount, setQuestionsCount] = useState(5);
   const [selectedAnswer, setSelectedAnswer] = useState(0);
   const [mode, setMode] = useState<string>();
   const [questions, setQuestions] = useState<Question[]>([
@@ -38,6 +48,10 @@ function QuizProvider({ children }: { children: React.ReactNode }) {
   return (
     <QuizContext.Provider
       value={{
+        questionIndex,
+        setQuestionIndex,
+        questionsCount,
+        setQuestionsCount,
         selectedAnswer,
         setSelectedAnswer,
         questions,

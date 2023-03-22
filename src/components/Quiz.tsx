@@ -3,30 +3,59 @@ import { useContext, useState } from 'react';
 import { QuizContext } from '../context/QuizContext';
 import Button from './Button';
 import Card from './Card';
+import Steps from './Steps';
 
 function Quiz() {
-  const { questions, setQuestions, selectedAnswer, setSelectedAnswer } =
-    useContext(QuizContext);
+  const {
+    questionsCount,
+    questions,
+    selectedAnswer,
+    setSelectedAnswer,
+    questionIndex,
+    setQuestionIndex,
+    setMode,
+  } = useContext(QuizContext);
+
+  const question = questions[questionIndex];
 
   return (
     <div className="flex min-h-full min-w-full flex-col px-3 sm:px-10 md:px-20">
-      <h2 className="mx-3 text-2xl font-bold dark:text-white">Select a mode</h2>
-      <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-        {questions[0].answers.map((answer, index) => (
-          <Card
-            key={index}
-            active={index === selectedAnswer}
-            onClick={() => setSelectedAnswer(index)}
-            text={answer}
-          />
-        ))}
-      </div>
-      <div>
-        <Button>
-          <p className="text-xl font-bold">Enter</p>
-          <EnterOutlined style={{ fontSize: '1.5rem' }} />
-        </Button>
-      </div>
+      {question && (
+        <>
+          <Steps quantity={questionsCount} position={questionIndex} />
+          <h2 className="mx-3 text-3xl font-bold dark:text-white">
+            {question.question}
+          </h2>
+          <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {question.answers.map((answer, index) => (
+              <Card
+                key={index}
+                active={index === selectedAnswer}
+                onClick={() => setSelectedAnswer(index)}
+              >
+                <span className="text-xl opacity-30">{index + 1}. </span>
+                <span className="text-xl">{answer}</span>
+              </Card>
+            ))}
+          </div>
+          <div>
+            <Button
+              onClick={() => {
+                if (!question.correctAnswer) {
+                  setMode(question.answers[selectedAnswer]);
+                }
+                if (questionIndex + 1 < questionsCount) {
+                  setQuestionIndex(questionIndex + 1);
+                }
+                setSelectedAnswer(0);
+              }}
+            >
+              <p className="text-xl font-bold">Enter</p>
+              <EnterOutlined style={{ fontSize: '1.5rem' }} />
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
