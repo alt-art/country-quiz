@@ -36,7 +36,7 @@ function Quiz() {
       {question && (
         <>
           <Steps quantity={questionsCount} position={questionIndex} />
-          <h2 className="mx-3 text-3xl font-bold">{question.question}</h2>
+          <h2 className="m-3 text-3xl font-bold">{question.question}</h2>
           <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {question.answers.map((answer, index) => (
               <Card
