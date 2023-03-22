@@ -11,11 +11,11 @@ const Steps = ({ quantity, position }: StepProps) => {
       {Array.from({ length: quantity }, (_, index) => (
         <Fragment key={index}>
           <span
-            className={`box-border h-4 w-4 rounded-full border-4 border-primary/50 ${
-              !(index > position) && 'bg-primary/40'
+            className={`box-content h-3 w-3 rounded-full border-4 border-primary/30 ${
+              !(index > position) && 'border-primary/80 bg-primary/20'
             }`}
           />
-          <hr className="w-2 border-2 border-primary/50 last:hidden" />
+          <hr className="w-2 border-2 border-primary/30 last:hidden" />
         </Fragment>
       ))}
     </div>
