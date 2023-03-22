@@ -49,22 +49,20 @@ function Quiz() {
               </Card>
             ))}
           </div>
-          <div>
-            <Button
-              onClick={() => {
-                if (!question.correctAnswer) {
-                  setMode(question.answers[selectedAnswer]);
-                }
-                if (questionIndex + 1 < questionsCount) {
-                  setQuestionIndex(questionIndex + 1);
-                }
-                setSelectedAnswer(0);
-              }}
-            >
-              <p className="text-xl font-bold">Enter</p>
-              <EnterOutlined style={{ fontSize: '1.5rem' }} />
-            </Button>
-          </div>
+          <Button
+            onClick={() => {
+              if (!question.correctAnswer) {
+                setMode(question.answers[selectedAnswer]);
+              }
+              if (questionIndex + 1 < questionsCount) {
+                setQuestionIndex(questionIndex + 1);
+              }
+              setSelectedAnswer(0);
+            }}
+          >
+            <p className="text-xl font-bold">Enter</p>
+            <EnterOutlined style={{ fontSize: '1.5rem' }} />
+          </Button>
         </>
       )}
     </div>
