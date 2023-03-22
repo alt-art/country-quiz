@@ -32,13 +32,11 @@ function Quiz() {
   const question = questions[questionIndex];
 
   return (
-    <div className="flex min-h-full min-w-full flex-col px-3 sm:px-10 md:px-20">
+    <div className="flex min-h-full min-w-full flex-col px-3 dark:text-white sm:px-10 md:px-20">
       {question && (
         <>
           <Steps quantity={questionsCount} position={questionIndex} />
-          <h2 className="mx-3 text-3xl font-bold dark:text-white">
-            {question.question}
-          </h2>
+          <h2 className="mx-3 text-3xl font-bold">{question.question}</h2>
           <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {question.answers.map((answer, index) => (
               <Card
