@@ -1,8 +1,26 @@
 import Head from 'next/head';
 import Quiz from '../components/Quiz';
 import QuizProvider from '../context/QuizContext';
+import questions from '../../questions.json';
+import { InferGetStaticPropsType } from 'next';
 
-export default function Home() {
+export async function getStaticProps() {
+  return {
+    props: {
+      questions: questions.map((question) => ({
+        id: question.id,
+        question: question.question,
+        answers: question.answers,
+        mode: question.mode as Mode,
+        flag: question.flag ? question.flag : null,
+      })),
+    },
+  };
+}
+
+export default function Home({
+  questions,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <Head>
@@ -15,7 +33,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <QuizProvider>
-        <Quiz />
+        <Quiz questions={questions} />
       </QuizProvider>
     </>
   );

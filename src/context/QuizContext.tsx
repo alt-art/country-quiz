@@ -1,11 +1,5 @@
 import { createContext, useState } from 'react';
 
-interface Question {
-  question: string;
-  answers: string[];
-  correctAnswer?: number;
-}
-
 interface QuizContextProps {
   questionIndex: number;
   setQuestionIndex: (questionIndex: number) => void;
@@ -13,10 +7,8 @@ interface QuizContextProps {
   setQuestionsCount: (questionsCount: number) => void;
   selectedAnswer: number;
   setSelectedAnswer: (selectedAnswer: number) => void;
-  questions: Question[];
-  setQuestions: (question: Question[]) => void;
-  mode?: string;
-  setMode: (mode: string) => void;
+  mode: Mode | null;
+  setMode: (mode: Mode | null) => void;
 }
 
 export const QuizContext = createContext<QuizContextProps>({
@@ -26,9 +18,7 @@ export const QuizContext = createContext<QuizContextProps>({
   setQuestionsCount: () => {},
   selectedAnswer: 0,
   setSelectedAnswer: () => {},
-  questions: [],
-  setQuestions: () => {},
-  mode: undefined,
+  mode: null,
   setMode: () => {},
 });
 
@@ -36,14 +26,7 @@ function QuizProvider({ children }: { children: React.ReactNode }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [questionsCount, setQuestionsCount] = useState(5);
   const [selectedAnswer, setSelectedAnswer] = useState(0);
-  const [mode, setMode] = useState<string>();
-  const [questions, setQuestions] = useState<Question[]>([
-    {
-      question: 'Select a mode',
-      answers: ['Capitals', 'Flags', 'Continents', 'Languages'],
-      correctAnswer: undefined,
-    },
-  ]);
+  const [mode, setMode] = useState<Mode | null>(null);
 
   return (
     <QuizContext.Provider
@@ -54,8 +37,6 @@ function QuizProvider({ children }: { children: React.ReactNode }) {
         setQuestionsCount,
         selectedAnswer,
         setSelectedAnswer,
-        questions,
-        setQuestions,
         mode,
         setMode,
       }}

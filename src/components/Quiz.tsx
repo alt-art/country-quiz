@@ -2,24 +2,51 @@ import { EnterOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { QuizContext } from '../context/QuizContext';
 import Button from './Button';
-import Card from './Card';
 import Steps from './Steps';
+import Question from './Question';
+import getQuestion from '../utils/getQuestion';
 
-function Quiz() {
+export interface Props {
+  questions: Question[];
+}
+
+function Quiz({ questions }: Props) {
   const {
     questionsCount,
-    questions,
-    selectedAnswer,
     setSelectedAnswer,
-    questionIndex,
-    setQuestionIndex,
     setMode,
+    mode,
+    setQuestionIndex,
+    selectedAnswer,
+    questionIndex,
   } = useContext(QuizContext);
+
+  const [currentQuestion, setCurrentQuestion] = useState<Question>({
+    id: '0',
+    question: 'Select a mode to start',
+    answers: ['Capitals', 'Flags', 'Continents', 'Languages'],
+    flag: null,
+    mode: null,
+  });
+
+  function handleSubmit() {
+    setSelectedAnswer(0);
+    setQuestionIndex(questionIndex + 1);
+    if (!mode) {
+      const mode = currentQuestion.answers[
+        selectedAnswer
+      ].toUpperCase() as Mode;
+      setMode(mode);
+      setCurrentQuestion(getQuestion(questions, mode));
+      return;
+    }
+    setCurrentQuestion(getQuestion(questions, mode));
+  }
 
   useEffect(() => {
     function keyDownHandler(e: KeyboardEvent) {
       const key = Number(e.key);
-      if (key >= 1 && key <= questions[questionIndex].answers.length) {
+      if (key >= 1 && key <= questionsCount) {
         setSelectedAnswer(key - 1);
       }
     }
@@ -27,44 +54,16 @@ function Quiz() {
     return () => {
       window.removeEventListener('keydown', keyDownHandler);
     };
-  }, [questions, questionIndex, setSelectedAnswer]);
-
-  const question = questions[questionIndex];
+  }, [questionIndex, questionsCount, setSelectedAnswer]);
 
   return (
     <div className="flex min-h-full min-w-full flex-col px-3 dark:text-white sm:px-10 md:px-20">
-      {question && (
-        <>
-          <Steps quantity={questionsCount} position={questionIndex} />
-          <h2 className="m-3 text-3xl font-bold">{question.question}</h2>
-          <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            {question.answers.map((answer, index) => (
-              <Card
-                key={index}
-                active={index === selectedAnswer}
-                onClick={() => setSelectedAnswer(index)}
-              >
-                <span className="text-xl opacity-30">{index + 1}. </span>
-                <span className="text-xl">{answer}</span>
-              </Card>
-            ))}
-          </div>
-          <Button
-            onClick={() => {
-              if (!question.correctAnswer) {
-                setMode(question.answers[selectedAnswer]);
-              }
-              if (questionIndex + 1 < questionsCount) {
-                setQuestionIndex(questionIndex + 1);
-              }
-              setSelectedAnswer(0);
-            }}
-          >
-            <p className="text-xl font-bold">Enter</p>
-            <EnterOutlined style={{ fontSize: '1.5rem' }} />
-          </Button>
-        </>
-      )}
+      <Steps quantity={questionsCount} position={questionIndex} />
+      <Question question={currentQuestion} />
+      <Button onClick={handleSubmit}>
+        <p className="text-xl font-bold">Enter</p>
+        <EnterOutlined style={{ fontSize: '1.5rem' }} />
+      </Button>
     </div>
   );
 }
