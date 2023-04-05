@@ -12,3 +12,7 @@ interface Question {
   flag: string | null;
   mode: Mode | null;
 }
+
+interface CheckAnswer {
+  correct: boolean;
+}

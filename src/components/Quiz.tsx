@@ -1,10 +1,12 @@
 import { EnterOutlined } from '@ant-design/icons';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { QuizContext } from '../context/QuizContext';
 import Button from './Button';
 import Steps from './Steps';
 import Question from './Question';
 import getQuestion from '../utils/getQuestion';
+import { checkAnswer } from '../utils/quizAPI';
+import QuizError from './QuizError';
 
 export interface Props {
   questions: Question[];
@@ -17,53 +19,75 @@ function Quiz({ questions }: Props) {
     setMode,
     mode,
     setQuestionIndex,
-    selectedAnswer,
     questionIndex,
+    selectedAnswer,
+    setError,
+    error,
+    question,
+    setQuestion,
   } = useContext(QuizContext);
 
-  const [currentQuestion, setCurrentQuestion] = useState<Question>({
-    id: '0',
-    question: 'Select a mode to start',
-    answers: ['Capitals', 'Flags', 'Continents', 'Languages'],
-    flag: null,
-    mode: null,
-  });
-
-  function handleSubmit() {
-    setSelectedAnswer(0);
-    setQuestionIndex(questionIndex + 1);
+  const handleSubmit = useCallback(() => {
+    const answer = question.answers[selectedAnswer];
     if (!mode) {
-      const mode = currentQuestion.answers[
-        selectedAnswer
-      ].toUpperCase() as Mode;
+      const mode = answer.toUpperCase() as Mode;
       setMode(mode);
-      setCurrentQuestion(getQuestion(questions, mode));
-      return;
+      setQuestion(getQuestion(questions, mode));
+      setSelectedAnswer(0);
+    } else {
+      checkAnswer(question.id, answer).then((result) => {
+        if (result.correct) {
+          setSelectedAnswer(0);
+          setQuestion(getQuestion(questions, mode));
+          setQuestionIndex(questionIndex + 1);
+        } else {
+          setError(true);
+        }
+      });
     }
-    setCurrentQuestion(getQuestion(questions, mode));
-  }
+  }, [
+    setMode,
+    mode,
+    setQuestion,
+    setSelectedAnswer,
+    setQuestionIndex,
+    questionIndex,
+    setError,
+    question,
+    selectedAnswer,
+    questions,
+  ]);
 
   useEffect(() => {
-    function keyDownHandler(e: KeyboardEvent) {
+    function keyPressHandler(e: KeyboardEvent) {
       const key = Number(e.key);
       if (key >= 1 && key <= questionsCount) {
         setSelectedAnswer(key - 1);
       }
+      if (e.key === 'Enter') {
+        handleSubmit();
+      }
     }
-    window.addEventListener('keydown', keyDownHandler);
+    window.addEventListener('keyup', keyPressHandler);
     return () => {
-      window.removeEventListener('keydown', keyDownHandler);
+      window.removeEventListener('keyup', keyPressHandler);
     };
-  }, [questionIndex, questionsCount, setSelectedAnswer]);
+  }, [questionIndex, questionsCount, setSelectedAnswer, handleSubmit]);
 
   return (
     <div className="flex min-h-full min-w-full flex-col px-3 dark:text-white sm:px-10 md:px-20">
-      <Steps quantity={questionsCount} position={questionIndex} />
-      <Question question={currentQuestion} />
-      <Button onClick={handleSubmit}>
-        <p className="text-xl font-bold">Enter</p>
-        <EnterOutlined style={{ fontSize: '1.5rem' }} />
-      </Button>
+      {!error ? (
+        <>
+          <Steps quantity={questionsCount} position={questionIndex} />
+          <Question question={question} />
+          <Button onClick={handleSubmit}>
+            <p className="text-xl font-bold">Enter</p>
+            <EnterOutlined style={{ fontSize: '1.5rem' }} />
+          </Button>
+        </>
+      ) : (
+        <QuizError />
+      )}
     </div>
   );
 }

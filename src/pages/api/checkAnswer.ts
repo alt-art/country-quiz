@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import questions from '../../../questions.json';
+import questions from '../../assets/questions.json';
 import { CheckAnswerDto } from './dto';
 import validate from './utils/validate';
 

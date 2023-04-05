@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Quiz from '../components/Quiz';
 import QuizProvider from '../context/QuizContext';
-import questions from '../../questions.json';
+import questions from '../assets/questions.json';
 import { InferGetStaticPropsType } from 'next';
 
 export async function getStaticProps() {
@@ -12,7 +12,7 @@ export async function getStaticProps() {
         question: question.question,
         answers: question.answers,
         mode: question.mode as Mode,
-        flag: question.flag ? question.flag : null,
+        flag: question.flag,
       })),
     },
   };
