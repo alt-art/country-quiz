@@ -1,4 +1,4 @@
-import { EnterOutlined } from '@ant-design/icons';
+import { EnterOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { QuizContext } from '../context/QuizContext';
 import Button from './Button';
@@ -27,6 +27,8 @@ function Quiz({ questions }: Props) {
     setQuestion,
   } = useContext(QuizContext);
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = useCallback(() => {
     const answer = question.answers[selectedAnswer];
     if (!mode) {
@@ -35,6 +37,7 @@ function Quiz({ questions }: Props) {
       setQuestion(getQuestion(questions, mode));
       setSelectedAnswer(0);
     } else {
+      setLoading(true);
       checkAnswer(question.id, answer).then((result) => {
         if (result.correct) {
           setSelectedAnswer(0);
@@ -43,6 +46,7 @@ function Quiz({ questions }: Props) {
         } else {
           setError(true);
         }
+        setLoading(false);
       });
     }
   }, [
@@ -80,9 +84,15 @@ function Quiz({ questions }: Props) {
         <>
           <Steps quantity={questionsCount} position={questionIndex} />
           <Question question={question} />
-          <Button onClick={handleSubmit}>
+          <Button onClick={handleSubmit} disabled={loading}>
             <p className="text-xl font-bold">Enter</p>
-            <EnterOutlined style={{ fontSize: '1.5rem' }} />
+            {!loading && <EnterOutlined style={{ fontSize: '1.5rem' }} />}
+            {loading && (
+              <LoadingOutlined
+                style={{ fontSize: '1.5rem' }}
+                className="animate-spin"
+              />
+            )}
           </Button>
         </>
       ) : (
