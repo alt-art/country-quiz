@@ -11,10 +11,10 @@ function Header() {
         </p>
       </div>
       <div className="flex h-20 items-center justify-center">
-        <Button>
+        <Button disabled>
           <BarChartOutlined style={{ fontSize: '1.5rem' }} />
         </Button>
-        <Button>
+        <Button disabled>
           <UserOutlined style={{ fontSize: '1.5rem' }} />
         </Button>
       </div>
