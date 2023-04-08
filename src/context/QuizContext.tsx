@@ -11,8 +11,8 @@ interface QuizContextProps {
   setMode: (mode: Mode | null) => void;
   error: boolean;
   setError: (error: boolean) => void;
-  question: Question;
-  setQuestion: (question: Question) => void;
+  questions: Question[];
+  setQuestions: (question: Question[]) => void;
 }
 
 export const DefaultQuestion = {
@@ -34,8 +34,8 @@ export const QuizContext = createContext<QuizContextProps>({
   setMode: () => {},
   error: false,
   setError: () => {},
-  question: DefaultQuestion,
-  setQuestion: () => {},
+  questions: [DefaultQuestion],
+  setQuestions: () => {},
 });
 
 function QuizProvider({ children }: { children: React.ReactNode }) {
@@ -44,7 +44,7 @@ function QuizProvider({ children }: { children: React.ReactNode }) {
   const [selectedAnswer, setSelectedAnswer] = useState(0);
   const [error, setError] = useState(false);
   const [mode, setMode] = useState<Mode | null>(null);
-  const [question, setQuestion] = useState<Question>(DefaultQuestion);
+  const [questions, setQuestions] = useState<Question[]>([DefaultQuestion]);
 
   return (
     <QuizContext.Provider
@@ -59,8 +59,8 @@ function QuizProvider({ children }: { children: React.ReactNode }) {
         setMode,
         error,
         setError,
-        question,
-        setQuestion,
+        questions,
+        setQuestions,
       }}
     >
       {children}

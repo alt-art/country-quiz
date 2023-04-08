@@ -12,7 +12,7 @@ export interface Props {
   questions: Question[];
 }
 
-function Quiz({ questions }: Props) {
+function Quiz({ questions: qts }: Props) {
   const {
     questionsCount,
     setSelectedAnswer,
@@ -23,25 +23,28 @@ function Quiz({ questions }: Props) {
     selectedAnswer,
     setError,
     error,
-    question,
-    setQuestion,
+    questions,
+    setQuestions,
   } = useContext(QuizContext);
 
   const [loading, setLoading] = useState(false);
+
+  const question = questions[questionIndex];
 
   const handleSubmit = useCallback(() => {
     const answer = question.answers[selectedAnswer];
     if (!mode) {
       const mode = answer.toUpperCase() as Mode;
       setMode(mode);
-      setQuestion(getQuestion(questions, mode));
+      setQuestions([...questions, getQuestion(qts, mode, questions)]);
       setSelectedAnswer(0);
+      setQuestionIndex(1);
     } else {
       setLoading(true);
       checkAnswer(question.id, answer).then((result) => {
         if (result.correct) {
           setSelectedAnswer(0);
-          setQuestion(getQuestion(questions, mode));
+          setQuestions([...questions, getQuestion(qts, mode, questions)]);
           setQuestionIndex(questionIndex + 1);
         } else {
           setError(true);
@@ -51,15 +54,16 @@ function Quiz({ questions }: Props) {
     }
   }, [
     setMode,
-    mode,
-    setQuestion,
+    setQuestions,
     setSelectedAnswer,
     setQuestionIndex,
-    questionIndex,
     setError,
-    question,
-    selectedAnswer,
+    mode,
     questions,
+    selectedAnswer,
+    questionIndex,
+    question,
+    qts,
   ]);
 
   useEffect(() => {
@@ -82,7 +86,10 @@ function Quiz({ questions }: Props) {
     <div className="flex min-h-full min-w-full flex-col px-3 dark:text-white sm:px-10 md:px-20">
       {!error ? (
         <>
-          <Steps quantity={questionsCount} position={questionIndex} />
+          <Steps
+            quantity={questionsCount}
+            position={questionIndex > 0 ? questionIndex - 1 : 0}
+          />
           <Question question={question} />
           <Button onClick={handleSubmit} disabled={loading}>
             <p className="text-xl font-bold">Enter</p>
@@ -90,7 +97,7 @@ function Quiz({ questions }: Props) {
             {loading && (
               <LoadingOutlined
                 style={{ fontSize: '1.5rem' }}
-                className="animate-spin"
+                className="mx-2 animate-spin"
               />
             )}
           </Button>

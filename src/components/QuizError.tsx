@@ -8,17 +8,17 @@ function QuizError() {
     setError,
     setQuestionIndex,
     setSelectedAnswer,
-    setQuestion,
+    setQuestions,
     setMode,
   } = useContext(QuizContext);
 
   const handleReset = useCallback(() => {
     setMode(null);
-    setQuestion(DefaultQuestion);
+    setQuestions([DefaultQuestion]);
     setQuestionIndex(0);
     setSelectedAnswer(0);
     setError(false);
-  }, [setError, setQuestionIndex, setSelectedAnswer, setQuestion, setMode]);
+  }, [setError, setQuestionIndex, setSelectedAnswer, setQuestions, setMode]);
 
   return (
     <div className="flex flex-col items-center text-center">
