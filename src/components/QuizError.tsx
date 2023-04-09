@@ -1,24 +1,14 @@
-import { EnterOutlined } from '@ant-design/icons';
 import Button from './Button';
-import { DefaultQuestion, QuizContext } from '../context/QuizContext';
-import { useCallback, useContext, useEffect } from 'react';
+import { DefaultQuiz, QuizContext } from '../context/QuizContext';
+import { useCallback, useContext } from 'react';
 
 function QuizError() {
-  const {
-    setError,
-    setQuestionIndex,
-    setSelectedAnswer,
-    setQuestions,
-    setMode,
-  } = useContext(QuizContext);
+  const { setSelectedAnswer, setQuiz } = useContext(QuizContext);
 
   const handleReset = useCallback(() => {
-    setMode(null);
-    setQuestions([DefaultQuestion]);
-    setQuestionIndex(0);
+    setQuiz(DefaultQuiz);
     setSelectedAnswer(0);
-    setError(false);
-  }, [setError, setQuestionIndex, setSelectedAnswer, setQuestions, setMode]);
+  }, [setSelectedAnswer, setQuiz]);
 
   return (
     <div className="flex flex-col items-center text-center">

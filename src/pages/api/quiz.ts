@@ -51,8 +51,13 @@ function getRandom<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-function shuffle<T>(array: T[]): T[] {
-  return array.sort(() => Math.random() - 0.5);
+export function shuffle<T>(array: T[]): T[] {
+  let shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
 function genQuestionLang(countries: Country[], country: Country): Question {

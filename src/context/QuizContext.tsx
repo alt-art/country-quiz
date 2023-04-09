@@ -1,18 +1,19 @@
 import { createContext, useState } from 'react';
 
-interface QuizContextProps {
+interface Quiz {
   questionIndex: number;
-  setQuestionIndex: (questionIndex: number) => void;
+  mode: Mode | null;
+  error: boolean;
+  questions: Question[];
+}
+
+interface QuizContextProps {
   questionsCount: number;
   setQuestionsCount: (questionsCount: number) => void;
   selectedAnswer: number;
   setSelectedAnswer: (selectedAnswer: number) => void;
-  mode: Mode | null;
-  setMode: (mode: Mode | null) => void;
-  error: boolean;
-  setError: (error: boolean) => void;
-  questions: Question[];
-  setQuestions: (question: Question[]) => void;
+  quiz: Quiz;
+  setQuiz: (quiz: Quiz) => void;
 }
 
 export const DefaultQuestion = {
@@ -23,44 +24,36 @@ export const DefaultQuestion = {
   mode: null,
 };
 
-export const QuizContext = createContext<QuizContextProps>({
+export const DefaultQuiz: Quiz = {
   questionIndex: 0,
-  setQuestionIndex: () => {},
+  mode: null,
+  error: false,
+  questions: [DefaultQuestion],
+};
+
+export const QuizContext = createContext<QuizContextProps>({
   questionsCount: 0,
   setQuestionsCount: () => {},
   selectedAnswer: 0,
   setSelectedAnswer: () => {},
-  mode: null,
-  setMode: () => {},
-  error: false,
-  setError: () => {},
-  questions: [DefaultQuestion],
-  setQuestions: () => {},
+  quiz: DefaultQuiz,
+  setQuiz: () => {},
 });
 
 function QuizProvider({ children }: { children: React.ReactNode }) {
-  const [questionIndex, setQuestionIndex] = useState(0);
   const [questionsCount, setQuestionsCount] = useState(5);
   const [selectedAnswer, setSelectedAnswer] = useState(0);
-  const [error, setError] = useState(false);
-  const [mode, setMode] = useState<Mode | null>(null);
-  const [questions, setQuestions] = useState<Question[]>([DefaultQuestion]);
+  const [quiz, setQuiz] = useState(DefaultQuiz);
 
   return (
     <QuizContext.Provider
       value={{
-        questionIndex,
-        setQuestionIndex,
         questionsCount,
         setQuestionsCount,
         selectedAnswer,
         setSelectedAnswer,
-        mode,
-        setMode,
-        error,
-        setError,
-        questions,
-        setQuestions,
+        quiz,
+        setQuiz,
       }}
     >
       {children}

@@ -3,6 +3,7 @@ import Quiz from '../components/Quiz';
 import QuizProvider from '../context/QuizContext';
 import questions from '../assets/questions.json';
 import { InferGetStaticPropsType } from 'next';
+import { shuffle } from './api/quiz';
 
 export async function getStaticProps() {
   return {
@@ -10,7 +11,7 @@ export async function getStaticProps() {
       questions: questions.map((question) => ({
         id: question.id,
         question: question.question,
-        answers: question.answers,
+        answers: shuffle(question.answers),
         mode: question.mode as Mode,
         flag: question.flag,
       })),

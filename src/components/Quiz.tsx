@@ -13,21 +13,12 @@ export interface Props {
 }
 
 function Quiz({ questions: qts }: Props) {
-  const {
-    questionsCount,
-    setSelectedAnswer,
-    setMode,
-    mode,
-    setQuestionIndex,
-    questionIndex,
-    selectedAnswer,
-    setError,
-    error,
-    questions,
-    setQuestions,
-  } = useContext(QuizContext);
+  const { questionsCount, setSelectedAnswer, selectedAnswer, quiz, setQuiz } =
+    useContext(QuizContext);
 
   const [loading, setLoading] = useState(false);
+
+  const { questions, questionIndex, error, mode } = quiz;
 
   const question = questions[questionIndex];
 
@@ -35,29 +26,33 @@ function Quiz({ questions: qts }: Props) {
     const answer = question.answers[selectedAnswer];
     if (!mode) {
       const mode = answer.toUpperCase() as Mode;
-      setMode(mode);
-      setQuestions([...questions, getQuestion(qts, mode, questions)]);
       setSelectedAnswer(0);
-      setQuestionIndex(1);
+      setQuiz({
+        ...quiz,
+        questionIndex: 1,
+        mode,
+        questions: [...questions, getQuestion(qts, mode, questions)],
+      });
     } else {
       setLoading(true);
       checkAnswer(question.id, answer).then((result) => {
         if (result.correct) {
           setSelectedAnswer(0);
-          setQuestions([...questions, getQuestion(qts, mode, questions)]);
-          setQuestionIndex(questionIndex + 1);
+          setQuiz({
+            ...quiz,
+            questionIndex: questionIndex + 1,
+            questions: [...questions, getQuestion(qts, mode, questions)],
+          });
         } else {
-          setError(true);
+          setQuiz({ ...quiz, error: true });
         }
         setLoading(false);
       });
     }
   }, [
-    setMode,
-    setQuestions,
     setSelectedAnswer,
-    setQuestionIndex,
-    setError,
+    setQuiz,
+    quiz,
     mode,
     questions,
     selectedAnswer,
