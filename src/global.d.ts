@@ -15,4 +15,5 @@ interface Question {
 
 interface CheckAnswer {
   correct: boolean;
+  correctAnswer: string;
 }

@@ -1,12 +1,11 @@
 import { EnterOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { QuizContext } from '../context/QuizContext';
+import { DefaultQuiz, QuizContext } from '../context/QuizContext';
 import Button from './Button';
 import Steps from './Steps';
 import Question from './Question';
 import getQuestion from '../utils/getQuestion';
 import { checkAnswer } from '../utils/quizAPI';
-import QuizError from './QuizError';
 
 export interface Props {
   questions: Question[];
@@ -18,11 +17,16 @@ function Quiz({ questions: qts }: Props) {
 
   const [loading, setLoading] = useState(false);
 
-  const { questions, questionIndex, error, mode } = quiz;
+  const { questions, questionIndex, correctAnswer: error } = quiz;
 
   const question = questions[questionIndex];
 
   const handleSubmit = useCallback(() => {
+    const { mode, correctAnswer: error, questionIndex } = quiz;
+    if (error) {
+      setQuiz(DefaultQuiz);
+      return;
+    }
     const answer = question.answers[selectedAnswer];
     if (!mode) {
       const mode = answer.toUpperCase() as Mode;
@@ -44,7 +48,7 @@ function Quiz({ questions: qts }: Props) {
             questions: [...questions, getQuestion(qts, mode, questions)],
           });
         } else {
-          setQuiz({ ...quiz, error: true });
+          setQuiz({ ...quiz, correctAnswer: result.correctAnswer });
         }
         setLoading(false);
       });
@@ -53,10 +57,8 @@ function Quiz({ questions: qts }: Props) {
     setSelectedAnswer,
     setQuiz,
     quiz,
-    mode,
     questions,
     selectedAnswer,
-    questionIndex,
     question,
     qts,
   ]);
@@ -70,6 +72,7 @@ function Quiz({ questions: qts }: Props) {
       if (e.key === 'Enter') {
         handleSubmit();
       }
+      e.stopPropagation();
     }
     window.addEventListener('keyup', keyPressHandler);
     return () => {
@@ -79,27 +82,16 @@ function Quiz({ questions: qts }: Props) {
 
   return (
     <div className="flex min-h-full min-w-full flex-col px-3 dark:text-white sm:px-10 md:px-20">
-      {!error ? (
-        <>
-          <Steps
-            quantity={questionsCount}
-            position={questionIndex > 0 ? questionIndex - 1 : 0}
-          />
-          <Question question={question} />
-          <Button onClick={handleSubmit} disabled={loading}>
-            <p className="text-xl font-bold">Enter</p>
-            {!loading && <EnterOutlined style={{ fontSize: '1.5rem' }} />}
-            {loading && (
-              <LoadingOutlined
-                style={{ fontSize: '1.5rem' }}
-                className="mx-2 animate-spin"
-              />
-            )}
-          </Button>
-        </>
-      ) : (
-        <QuizError />
-      )}
+      <Steps />
+      <Question question={question} />
+      <Button onClick={handleSubmit} disabled={loading}>
+        <p className="text-xl font-bold">{error ? 'Go back' : 'Enter'}</p>
+        {!loading ? (
+          <EnterOutlined className="text-2xl/[0]" />
+        ) : (
+          <LoadingOutlined className="text-2xl/[0] animate-spin" />
+        )}
+      </Button>
     </div>
   );
 }

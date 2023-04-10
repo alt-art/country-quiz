@@ -25,9 +25,10 @@ export default async function handler(
   const question = questions.find((question) => question.id === id);
   if (!question) {
     res.status(400).json({ error: 'Question not found' });
-    res.end();
   } else {
-    res.status(200).json({ correct: question.correctAnswer === answer });
-    res.end();
+    res.status(200).json({
+      correct: question.correctAnswer === answer,
+      correctAnswer: question.correctAnswer,
+    });
   }
 }

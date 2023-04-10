@@ -4,7 +4,7 @@ import { QuizContext } from '../context/QuizContext';
 import Image from 'next/image';
 
 function Question({ question }: any) {
-  const { selectedAnswer, setSelectedAnswer } = useContext(QuizContext);
+  const { selectedAnswer, setSelectedAnswer, quiz } = useContext(QuizContext);
 
   return (
     <div>
@@ -15,7 +15,7 @@ function Question({ question }: any) {
           alt={question.question}
           width={300}
           height={200}
-          className="mx-auto rounded-lg"
+          className="m-3 mx-auto rounded-lg"
         />
       )}
       <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
@@ -24,10 +24,8 @@ function Question({ question }: any) {
             key={index}
             active={index === selectedAnswer}
             onClick={() => setSelectedAnswer(index)}
-          >
-            <span className="text-xl opacity-30">{index + 1}. </span>
-            <span className="text-xl">{answer}</span>
-          </Card>
+            answer={answer}
+          />
         ))}
       </div>
     </div>

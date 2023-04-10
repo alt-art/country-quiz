@@ -3,7 +3,7 @@ import { createContext, useState } from 'react';
 interface Quiz {
   questionIndex: number;
   mode: Mode | null;
-  error: boolean;
+  correctAnswer: string | null;
   questions: Question[];
 }
 
@@ -27,7 +27,7 @@ export const DefaultQuestion = {
 export const DefaultQuiz: Quiz = {
   questionIndex: 0,
   mode: null,
-  error: false,
+  correctAnswer: null,
   questions: [DefaultQuestion],
 };
 
@@ -42,8 +42,13 @@ export const QuizContext = createContext<QuizContextProps>({
 
 function QuizProvider({ children }: { children: React.ReactNode }) {
   const [questionsCount, setQuestionsCount] = useState(5);
-  const [selectedAnswer, setSelectedAnswer] = useState(0);
+  const [selectedAnswer, setSelected] = useState(0);
   const [quiz, setQuiz] = useState(DefaultQuiz);
+
+  const setSelectedAnswer = (selectedAnswer: number) => {
+    if (quiz.correctAnswer) return;
+    setSelected(selectedAnswer);
+  };
 
   return (
     <QuizContext.Provider

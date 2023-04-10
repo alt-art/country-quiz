@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .counter-reset {
+    counter-reset: counter;
+  }
+  .counter-increment {
+    counter-increment: counter;
+  }
+  .counter {
+    content: counter(counter) ". "
+  }
+}
