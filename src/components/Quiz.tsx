@@ -89,7 +89,7 @@ function Quiz({ questions: qts }: Props) {
         {!loading ? (
           <EnterOutlined className="text-2xl/[0]" />
         ) : (
-          <LoadingOutlined className="text-2xl/[0] animate-spin" />
+          <LoadingOutlined className="mx-2 animate-spin text-2xl/[0]" />
         )}
       </Button>
     </div>
