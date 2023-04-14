@@ -5,6 +5,8 @@ interface Quiz {
   mode: Mode | null;
   correctAnswer: string | null;
   questions: Question[];
+  wrongAnswers: number;
+  startTime: Date | null;
 }
 
 interface QuizContextProps {
@@ -13,7 +15,7 @@ interface QuizContextProps {
   selectedAnswer: number;
   setSelectedAnswer: (selectedAnswer: number) => void;
   quiz: Quiz;
-  setQuiz: (quiz: Quiz) => void;
+  setQuiz: (quiz: Quiz | ((quiz: Quiz) => Quiz)) => void;
 }
 
 export const DefaultQuestion = {
@@ -29,6 +31,8 @@ export const DefaultQuiz: Quiz = {
   mode: null,
   correctAnswer: null,
   questions: [DefaultQuestion],
+  wrongAnswers: 0,
+  startTime: null,
 };
 
 export const QuizContext = createContext<QuizContextProps>({
@@ -41,7 +45,7 @@ export const QuizContext = createContext<QuizContextProps>({
 });
 
 function QuizProvider({ children }: { children: React.ReactNode }) {
-  const [questionsCount, setQuestionsCount] = useState(5);
+  const [questionsCount, setQuestionsCount] = useState(10);
   const [selectedAnswer, setSelected] = useState(0);
   const [quiz, setQuiz] = useState(DefaultQuiz);
 
