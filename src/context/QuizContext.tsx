@@ -7,13 +7,12 @@ interface Quiz {
   questions: Question[];
   wrongAnswers: number;
   startTime: Date | null;
+  selectedAnswer: number;
 }
 
 interface QuizContextProps {
   questionsCount: number;
   setQuestionsCount: (questionsCount: number) => void;
-  selectedAnswer: number;
-  setSelectedAnswer: (selectedAnswer: number) => void;
   quiz: Quiz;
   setQuiz: (quiz: Quiz | ((quiz: Quiz) => Quiz)) => void;
 }
@@ -33,34 +32,25 @@ export const DefaultQuiz: Quiz = {
   questions: [DefaultQuestion],
   wrongAnswers: 0,
   startTime: null,
+  selectedAnswer: 0,
 };
 
 export const QuizContext = createContext<QuizContextProps>({
   questionsCount: 0,
   setQuestionsCount: () => {},
-  selectedAnswer: 0,
-  setSelectedAnswer: () => {},
   quiz: DefaultQuiz,
   setQuiz: () => {},
 });
 
 function QuizProvider({ children }: { children: React.ReactNode }) {
   const [questionsCount, setQuestionsCount] = useState(10);
-  const [selectedAnswer, setSelected] = useState(0);
   const [quiz, setQuiz] = useState(DefaultQuiz);
-
-  const setSelectedAnswer = (selectedAnswer: number) => {
-    if (quiz.correctAnswer) return;
-    setSelected(selectedAnswer);
-  };
 
   return (
     <QuizContext.Provider
       value={{
         questionsCount,
         setQuestionsCount,
-        selectedAnswer,
-        setSelectedAnswer,
         quiz,
         setQuiz,
       }}

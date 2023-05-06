@@ -13,12 +13,16 @@ export interface Props {
 }
 
 function Quiz({ questions: qts }: Props) {
-  const { questionsCount, setSelectedAnswer, selectedAnswer, quiz, setQuiz } =
-    useContext(QuizContext);
+  const { questionsCount, quiz, setQuiz } = useContext(QuizContext);
 
   const [loading, setLoading] = useState(false);
 
-  const { questions, questionIndex, correctAnswer: error } = quiz;
+  const {
+    questions,
+    questionIndex,
+    selectedAnswer,
+    correctAnswer: error,
+  } = quiz;
 
   const question = questions[questionIndex];
 
@@ -27,10 +31,10 @@ function Quiz({ questions: qts }: Props) {
     const answer = question.answers[selectedAnswer];
     if (!mode) {
       const mode = answer.toUpperCase() as Mode;
-      setSelectedAnswer(0);
       setQuiz((quiz) => ({
         ...quiz,
         questionIndex: 1,
+        selectedAnswer: 0,
         mode,
         questions: [...quiz.questions, getQuestion(qts, mode, quiz.questions)],
         startTime: new Date(),
@@ -40,6 +44,7 @@ function Quiz({ questions: qts }: Props) {
     if (error) {
       setQuiz((quiz) => ({
         ...quiz,
+        selectedAnswer: 0,
         correctAnswer: null,
         questions: [...quiz.questions, getQuestion(qts, mode, quiz.questions)],
         questionIndex: quiz.questionIndex + 1,
@@ -49,10 +54,10 @@ function Quiz({ questions: qts }: Props) {
     setLoading(true);
     checkAnswer(question.id, answer).then((result) => {
       if (result.correct) {
-        setSelectedAnswer(0);
         setQuiz((quiz) => ({
           ...quiz,
           questionIndex: quiz.questionIndex + 1,
+          selectedAnswer: 0,
           questions: [
             ...quiz.questions,
             getQuestion(qts, mode, quiz.questions),
@@ -67,13 +72,16 @@ function Quiz({ questions: qts }: Props) {
       }
       setLoading(false);
     });
-  }, [setSelectedAnswer, setQuiz, quiz, selectedAnswer, question, qts]);
+  }, [setQuiz, quiz, selectedAnswer, question, qts]);
 
   useEffect(() => {
     function keyPressHandler(e: KeyboardEvent) {
       const key = Number(e.key);
       if (key >= 1 && key <= questionsCount) {
-        setSelectedAnswer(key - 1);
+        setQuiz((quiz) => ({
+          ...quiz,
+          selectedAnswer: key - 1,
+        }));
       }
       if (e.key === 'Enter') {
         handleSubmit();
@@ -84,7 +92,7 @@ function Quiz({ questions: qts }: Props) {
     return () => {
       window.removeEventListener('keyup', keyPressHandler);
     };
-  }, [questionIndex, questionsCount, setSelectedAnswer, handleSubmit]);
+  }, [questionIndex, questionsCount, handleSubmit, setQuiz]);
 
   return (
     <div className="flex min-h-full min-w-full flex-col px-3 dark:text-white sm:px-10 md:px-20">
